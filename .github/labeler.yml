@@ -1,0 +1,6 @@
+action:
+  - action.yml
+automation:
+  - .github/workflows/*
+docs:
+  - '*.md'
