@@ -166,7 +166,6 @@ jobs:
 
 The scripts and documentation in this project are released under the [MIT License](./LICENSE)
 
-
 <!-- references -->
 [release-list]: /releases
 [draft-release]: .github/workflows/draft-release.yml
