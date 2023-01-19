@@ -1,6 +1,6 @@
 # Wizcli Wrapper v1
 
-This is a repository for the **Wizcli Wrapper** GitHub action. 
+This is a repository for the **Wizcli Wrapper v1** GitHub action. 
 
 You can use this action for the following:
 - scanning Infrastructure as Code (IaC) files in your repository for vulnerabilities and compliance issues:
