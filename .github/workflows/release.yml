@@ -1,4 +1,4 @@
-name: Release
+name: Release new action version
 on:
   release:
     types: [released]
@@ -11,19 +11,17 @@ on:
 env:
   TAG_NAME: ${{ github.event.inputs.TAG_NAME || github.event.release.tag_name }}
 
-permissions:
-  contents: write
-
 jobs:
   update_tag:
     name: Update the major tag to include the ${{ github.event.inputs.TAG_NAME || github.event.release.tag_name }} changes
     runs-on: ubuntu-latest
-    environment:
-      # Note: this environment is protected
-      name: Release
+    permissions:
+      contents: write
     steps:
+      - uses: actions/checkout@v4
+
       - name: Update the ${{ env.TAG_NAME }} tag
         id: update-major-tag
-        uses: actions/publish-action@v0.2.2
+        uses: actions/publish-action@v1
         with:
           source-tag: ${{ env.TAG_NAME }}
