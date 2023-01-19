@@ -3,7 +3,7 @@
 This is a repository for the **Wizcli Wrapper** GitHub action. 
 
 You can use this action for the following:
-- scanning of Infrastructure as Code (IaC) files in your repository, here's what is currently supported:
+- scanning Infrastructure as Code (IaC) files in your repository for vulnerabilities and compliance issues:
   - Terraform	-> HCL (.tf) files
   - Terraform	-> JSON output of Terraform plan. Generate this file in your plan stage using this command: `terraform plan -out plan.tfplan && terraform show -json plan.tfplan > plan.tfplanjson`
   - AWS CloudFormation	-> JSON or YAML files
@@ -16,70 +16,44 @@ You can use this action for the following:
 - scanning for secrets in your repository and Docker images
   - the wizcli will search for secrets during the IaC and the Docker scan by default
 
-Not supported yet:
+Not supported:
+
 - scanning of VM Images
 - scanning of Virtual Machines
 
+# Prerequisites
+
+- Wiz [service account](https://docs.wiz.io/wiz-docs/docs/set-up-wiz-cli#generate-a-wiz-service-account-key)
+- The following secrets in GitHub repo or organization. (`WP only`) We already completed this step for your Github EMU Organization and added the secrets
+   - `WIZ_CLIENT_ID`
+   - `WIZ_CLIENT_SECRET`
+- Linux runner (Ubuntu, Debian, CentOS, etc.)
+
+# Usage
+
+```yaml
+  uses: aleksei-aikashev/wizcli-wrapper@v1
+  with: 
+    wiz_client_id: ${{ secrets.WIZ_CLIENT_ID }}
+    wiz_client_secret: ${{ secrets.WIZ_CLIENT_SECRET }}
+
+```
+
+# Table of Contents
 
 - [Wizcli Wrapper v1](#wizcli-wrapper-v1)
-  - [Prerequisites](#prerequisites)
-  - [Usage](#usage)
+- [Prerequisites](#prerequisites)
+- [Usage](#usage)
+- [Table of Contents](#table-of-contents)
   - [All default values expanded](#all-default-values-expanded)
 - [Scenarios](#scenarios)
   - [Scan only IaC with custom policy](#scan-only-iac-with-custom-policy)
   - [Scan only Docker images with custom policy and relative Dockerfile path](#scan-only-docker-images-with-custom-policy-and-relative-dockerfile-path)
   - [Scanning for secrets and breaking the build](#scanning-for-secrets-and-breaking-the-build)
+- [Development](#development)
+  - [Contributing](#contributing)
+  - [Release instructions](#release-instructions)
 - [License](#license)
-
-## Prerequisites
-
-- Wiz [service account](https://docs.wiz.io/wiz-docs/docs/set-up-wiz-cli#generate-a-wiz-service-account-key)
-- Linux runner (Ubuntu, Debian, CentOS, etc.)
-
-## Usage
-
-1. Create a Wiz service account at [app.wiz.io](https://app.wiz.io) following this [guide](https://docs.wiz.io/wiz-docs/docs/set-up-wiz-cli#generate-a-wiz-service-account-key). And add the following secrets to your GitHub repo or organization. (`WP only`) We already completed this step for your Github EMU Organization and added the secrets.
-   1. `WIZ_CLIENT_ID`
-   2. `WIZ_CLIENT_SECRET`
-2. Add a `wiz-full-scan.yml` workflow file to `.github/workflows` directory. You can use the following template:
-   - **Note** - you can find all inputs and their default values in the [All default values expanded](#all-default-values-expanded) section below
-
-```yaml
-name: Wiz Full Scan
-on:
-  pull_request:
-    paths:
-      - "**.tf**"
-      - "**.tfvars"
-      - "**.tfplanjson"
-      - "**.json"
-      - "**.yaml"
-      - "**.yml"
-      - "**Dockerfile"
-      - "**.dockerfile"
-  push:
-    branches:
-      - main
-
-jobs:
-  wiz-full-scan:
-    name: wiz-full-scan
-    runs-on: [REPLACE WITH YOUR RUNNER] # e.g. [ubuntu-latest] or [self-hosted,sg-kubernetes,ap-northeast-1]
-    steps:
-      
-      # Checkout the repository to the GitHub Actions runner
-      - name: Check out repository
-        uses: actions/checkout@v3
-
-      # Run both wiz iac and docker scans, and upload the results to Wiz
-      - name: Wiz Full Scan With Default Values
-        uses: aleksei-aikashev/wizcli-wrapper@v1
-        with: 
-        # Common inputs
-          wiz_client_id: ${{ secrets.WIZ_CLIENT_ID }}
-          wiz_client_secret: ${{ secrets.WIZ_CLIENT_SECRET }}
-
-```
 
 ## All default values expanded
 
@@ -175,17 +149,22 @@ jobs:
     wiz_client_secret: ${{ secrets.WIZ_CLIENT_SECRET }}
 ```
 
+# Development
+## Contributing
+
+1. Fork the repository 
+2. Create a feature branch `feature/your-feature-name`
+3. Test locally and create a pull request to the `main` branch
+## Release instructions
+
+1. Locate the semantic version of the [upcoming release][release-list] (a draft is maintained by the [`draft-release` workflow][draft-release])
+2. Publish the draft release from the `main` branch with semantic version as the tag name, _without_ the checkbox to publish to the GitHub Marketplace checked
+3. After publishing the release, the [`release` workflow][release] will automatically run to create/update the corresponding the major version tag such as `v0`
+
+
 # License
 
 The scripts and documentation in this project are released under the [MIT License](./LICENSE)
-
-# Release instructions
-
-In order to release a new version of this Action:
-
-1. Locate the semantic version of the [upcoming release][release-list] (a draft is maintained by the [`draft-release` workflow][draft-release]).
-2. Publish the draft release from the `main` branch with semantic version as the tag name, _with_ the checkbox to publish to the GitHub Marketplace checked. :ballot_box_with_check:
-3. After publishing the release, the [`release` workflow][release] will automatically run to create/update the corresponding the major version tag such as `v0`.
 
 
 <!-- references -->
